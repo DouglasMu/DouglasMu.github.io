@@ -63,7 +63,7 @@ Minute Hour Day Month DayOFWeek Command
 第4列 表示月份1～12
 第5列标识号星期0～6（0表示星期天）
 第6列要运行的命令
-```js
+```
 
 # Use the hash sign to prefix a comment
 # +—————- minute (0 – 59)
@@ -78,7 +78,7 @@ Minute Hour Day Month DayOFWeek Command
 
 > 1 简单打印
 
-```js
+```
 
 每天早上6点 
 0 6 * * * echo "Good morning." >> /tmp/test.txt //注意单纯echo，从屏幕上看不到任何输出，因为cron把任何输出都email到root的信箱了。
@@ -132,7 +132,7 @@ Minute Hour Day Month DayOFWeek Command
 
 > 2 nginx示例
 
-```js
+```
 
 30 21 * * * /etc/init.d/nginx restart
 每晚的21:30重启 nginx。
