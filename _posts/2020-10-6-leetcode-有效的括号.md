@@ -52,7 +52,7 @@ author: Keyon
 使用栈，左括号代表入栈，右括号代表出栈
 如果要出栈，出栈的元素要与当前元素匹配
 最终栈要为空
-```js
+```python
 class Solution:
     def isValid(self,s):
       stack = []
@@ -77,7 +77,7 @@ class Solution:
 ```
 ## 解法2
 不断通过消除 '[]' ， '()', '{}' ，最后判断剩下的是否是空串即可，就像开心消消乐一样。
-```js
+```python
 class Solution:
    def isValid(self, s):
        while '[]' in s or '()' in s or '{}' in s:
