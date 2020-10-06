@@ -1,0 +1,101 @@
+I"�<ul id="markdown-toc">
+  <li><a href="#有效的括号" id="markdown-toc-有效的括号">有效的括号</a></li>
+  <li><a href="#解题思路" id="markdown-toc-解题思路">解题思路</a></li>
+  <li><a href="#解法1" id="markdown-toc-解法1">解法1</a></li>
+  <li><a href="#解法2" id="markdown-toc-解法2">解法2</a></li>
+</ul>
+<h2 id="有效的括号">有效的括号</h2>
+<p>给定一个只包括 ‘(‘，’)’，’{‘，’}’，’[‘，’]’ 的字符串，判断字符串是否有效。</p>
+
+<p>有效字符串需满足：</p>
+
+<p>左括号必须用相同类型的右括号闭合。
+左括号必须以正确的顺序闭合。
+注意空字符串可被认为是有效字符串。
+##示例 1:</p>
+
+<blockquote>
+  <p>输入: “()”</p>
+</blockquote>
+
+<blockquote>
+  <p>输出: true</p>
+</blockquote>
+
+<p>##示例 2:</p>
+
+<blockquote>
+  <p>输入: “()[]{}”</p>
+</blockquote>
+
+<blockquote>
+  <p>输出: true</p>
+</blockquote>
+
+<p>##示例 3:</p>
+
+<blockquote>
+  <p>输入: “(]”</p>
+</blockquote>
+
+<blockquote>
+  <p>输出: false</p>
+</blockquote>
+
+<p>##示例 4:</p>
+
+<blockquote>
+  <p>输入: “([)]”</p>
+</blockquote>
+
+<blockquote>
+  <p>输出: false</p>
+</blockquote>
+
+<p>##示例 5:</p>
+
+<blockquote>
+  <p>输入: “{[]}”</p>
+</blockquote>
+
+<blockquote>
+  <p>输出: true</p>
+</blockquote>
+
+<h2 id="解题思路">解题思路</h2>
+<h2 id="解法1">解法1</h2>
+<p>使用栈，左括号代表入栈，右括号代表出栈
+如果要出栈，出栈的元素要与当前元素匹配
+最终栈要为空</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Solution</span><span class="p">:</span>
+    <span class="nx">def</span> <span class="nx">isValid</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span><span class="nx">s</span><span class="p">):</span>
+      <span class="nx">stack</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="nx">map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="dl">"</span><span class="s2">{</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">}</span><span class="dl">"</span><span class="p">,</span>
+        <span class="dl">"</span><span class="s2">[</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">]</span><span class="dl">"</span><span class="p">,</span>
+        <span class="dl">"</span><span class="s2">(</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">)</span><span class="dl">"</span>
+      <span class="p">}</span>
+      <span class="k">for</span> <span class="nx">x</span> <span class="k">in</span> <span class="nx">s</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nx">x</span> <span class="k">in</span> <span class="nx">map</span><span class="p">:</span>
+          <span class="nx">stack</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">map</span><span class="p">[</span><span class="nx">x</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">if</span> <span class="nx">len</span><span class="p">(</span><span class="nx">stack</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="nx">top_element</span> <span class="o">=</span> <span class="nx">stack</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nx">x</span> <span class="o">!=</span> <span class="nx">top_element</span><span class="p">:</span>
+              <span class="k">return</span> <span class="nx">False</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="k">continue</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nx">False</span>
+      <span class="k">return</span> <span class="nx">len</span><span class="p">(</span><span class="nx">stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+</code></pre></div></div>
+<h2 id="解法2">解法2</h2>
+<p>不断通过消除 ‘[]’ ， ‘()’, ‘{}’ ，最后判断剩下的是否是空串即可，就像开心消消乐一样。</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">Solution</span><span class="p">:</span>
+   <span class="nx">def</span> <span class="nx">isValid</span><span class="p">(</span><span class="nb">self</span><span class="p">,</span> <span class="nx">s</span><span class="p">):</span>
+       <span class="k">while</span> <span class="dl">'</span><span class="s1">[]</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">s</span> <span class="nx">or</span> <span class="dl">'</span><span class="s1">()</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">s</span> <span class="nx">or</span> <span class="dl">'</span><span class="s1">{}</span><span class="dl">'</span> <span class="k">in</span> <span class="nx">s</span><span class="p">:</span>
+           <span class="nx">s</span> <span class="o">=</span> <span class="nx">s</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">[]</span><span class="dl">'</span><span class="p">,</span><span class="dl">''</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">()</span><span class="dl">'</span><span class="p">,</span><span class="dl">''</span><span class="p">).</span><span class="nx">replace</span><span class="p">(</span><span class="dl">'</span><span class="s1">{}</span><span class="dl">'</span><span class="p">,</span><span class="dl">''</span><span class="p">)</span>
+           <span class="k">return</span> <span class="nx">not</span> <span class="nx">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+</code></pre></div></div>
+
+:ET

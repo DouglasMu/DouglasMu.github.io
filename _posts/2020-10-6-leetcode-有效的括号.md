@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  leetcode
+title:  leetcode-有效的括号
 categories: leetcode
 tags:  Python leetcode
 author: Keyon
