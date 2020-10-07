@@ -1,0 +1,333 @@
+I"PO<ul id="markdown-toc">
+  <li><a href="#预训练模型总结" id="markdown-toc-预训练模型总结">预训练模型总结</a>    <ul>
+      <li><a href="#什么是预训练模型" id="markdown-toc-什么是预训练模型">什么是预训练模型？</a></li>
+      <li><a href="#预训练模型有什么作用" id="markdown-toc-预训练模型有什么作用">预训练模型有什么作用？</a>        <ul>
+          <li><a href="#比较典型的基于语言模型的预训练模型发展脉络" id="markdown-toc-比较典型的基于语言模型的预训练模型发展脉络">比较典型的基于语言模型的预训练模型发展脉络</a></li>
+        </ul>
+      </li>
+      <li><a href="#预训练模型的两大范式浅层词嵌入和预训练编码器" id="markdown-toc-预训练模型的两大范式浅层词嵌入和预训练编码器">预训练模型的两大范式（浅层词嵌入和预训练编码器）</a>        <ul>
+          <li><a href="#浅层词嵌入" id="markdown-toc-浅层词嵌入">浅层词嵌入</a></li>
+          <li><a href="#预训练编码器" id="markdown-toc-预训练编码器">预训练编码器</a></li>
+        </ul>
+      </li>
+      <li><a href="#按照类型进行分类" id="markdown-toc-按照类型进行分类">按照类型进行分类</a>        <ul>
+          <li><a href="#监督学习预训练模型" id="markdown-toc-监督学习预训练模型">监督学习预训练模型</a></li>
+          <li><a href="#无监督学习预训练模型" id="markdown-toc-无监督学习预训练模型">无监督学习预训练模型</a></li>
+          <li><a href="#自监督学习预训练模型" id="markdown-toc-自监督学习预训练模型">自监督学习预训练模型</a></li>
+        </ul>
+      </li>
+      <li><a href="#ptms有哪些拓展" id="markdown-toc-ptms有哪些拓展">PTMs有哪些拓展？</a>        <ul>
+          <li><a href="#1引入知识" id="markdown-toc-1引入知识">1、引入知识</a></li>
+          <li><a href="#2模型压缩" id="markdown-toc-2模型压缩">2、模型压缩</a></li>
+          <li><a href="#3多模态" id="markdown-toc-3多模态">3、多模态</a></li>
+          <li><a href="#4领域预训练" id="markdown-toc-4领域预训练">4、领域预训练</a></li>
+          <li><a href="#5多语言和特定语言" id="markdown-toc-5多语言和特定语言">5、多语言和特定语言</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="预训练模型总结">预训练模型总结</h2>
+
+<p><img src="https://i.loli.net/2020/10/06/CzZjFTuVW7ceoaJ.png" alt="自然语言处理流程图.png" /></p>
+
+<h3 id="什么是预训练模型">什么是预训练模型？</h3>
+
+<ul>
+  <li>
+    <p>迁移学习(Transfer learning) 顾名思义就是把已训练好的模型（预训练模型）参数
+迁移到新的模型来帮助新模型训练。考虑到大部分数据或任务都是存在相关性的，
+所以通过迁移学习我们可以将已经学到的模型参数（也可理解为模型学到的知识）
+通过某种方式来分享给新模型从而加快并优化模型的学习效率不用像大多数网络那样从零学习。</p>
+  </li>
+  <li>
+    <p>pre-training就是把一个已经训练好的模型参数应用到另一个类似任务上作为初始参数，
+这样之前训练模型的过程就叫做预训练</p>
+  </li>
+  <li>
+    <p>fine tuning就是在训练新任务的过程中慢慢调整参数（微调）</p>
+  </li>
+</ul>
+
+<h3 id="预训练模型有什么作用">预训练模型有什么作用？</h3>
+
+<p>深度学习时代，为了充分训练深层模型参数并防止过拟合，通常需要更多标注数据喂养。
+在NLP领域，标注数据更是一个昂贵资源。PTMs从大量无标注数据中进行预训练使许多NLP任务获得显著的性能提升。
+总的来看，预训练模型PTMs的优势包括：</p>
+
+<ul>
+  <li>在庞大的无标注数据上进行预训练可以获取更通用的语言表示，并有利于下游任务；</li>
+  <li>为模型提供了一个更好的初始化参数，在目标任务上具备更好的泛化性能、并加速收敛；</li>
+  <li>是一种有效的正则化手段，避免在小数据集上过拟合（一个随机初始化的深层模型容易对小数据集过拟合）</li>
+</ul>
+
+<h4 id="比较典型的基于语言模型的预训练模型发展脉络">比较典型的基于语言模型的预训练模型发展脉络</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th>模型名称</th>
+      <th>特征提取模块</th>
+      <th>预训练任务</th>
+      <th>语言模型</th>
+      <th>特点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ELMO</td>
+      <td>BiLSTM</td>
+      <td>LM</td>
+      <td>单向拼接</td>
+      <td>首次真正的将预训练的思想进行了实践</td>
+    </tr>
+    <tr>
+      <td>GPT</td>
+      <td>Transformer</td>
+      <td>LM</td>
+      <td>单向</td>
+      <td>统一下游微调任务的形式，证明了transformer结构在预训练任务中的有效性</td>
+    </tr>
+    <tr>
+      <td>BERT</td>
+      <td>Transformer</td>
+      <td>MLM，NSP</td>
+      <td>双向</td>
+      <td>创新性的提出MSM任务，首次事先了双向的语言模型</td>
+    </tr>
+    <tr>
+      <td>GPT2.0</td>
+      <td>Transformer</td>
+      <td>LM</td>
+      <td>单向</td>
+      <td>在生成任务中取的良好的结果</td>
+    </tr>
+    <tr>
+      <td>MASS</td>
+      <td>Transformer</td>
+      <td>LM，MLM</td>
+      <td>单向，双向</td>
+      <td>将序列任务引入到预训练过程</td>
+    </tr>
+    <tr>
+      <td>UNILM</td>
+      <td>Transformer</td>
+      <td>LM，MLM，S2SLM</td>
+      <td>单向，双向</td>
+      <td>灵活的运用mask矩阵，实现仅仅用Encoder来作序列任务</td>
+    </tr>
+    <tr>
+      <td>MTDNN</td>
+      <td>Transformer</td>
+      <td>MLM</td>
+      <td>双向</td>
+      <td>在下游阶段引入了多任务学习</td>
+    </tr>
+    <tr>
+      <td>Transformer-XL</td>
+      <td>Transformer-XL</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>XLNET</td>
+      <td>Transformer-XL</td>
+      <td>Perm-LM</td>
+      <td>双向</td>
+      <td>排列语言模型，双注意流</td>
+    </tr>
+    <tr>
+      <td>ALBERT</td>
+      <td>Transformer</td>
+      <td>MLM</td>
+      <td>双向</td>
+      <td>对BERT进行了针对性的模型压缩，保留了尽可能大的性能同时精简了模型</td>
+    </tr>
+    <tr>
+      <td>RoBERTa</td>
+      <td>Transformer</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>DistillBERT</td>
+      <td>Transformer</td>
+      <td> </td>
+      <td> </td>
+      <td>对BERT进行了模型蒸馏，从而达到模型压缩的目的</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="预训练模型的两大范式浅层词嵌入和预训练编码器">预训练模型的两大范式（浅层词嵌入和预训练编码器）</h3>
+
+<h4 id="浅层词嵌入">浅层词嵌入</h4>
+
+<p>这一类PTMs范式是我们通常所说的“词向量”，
+其主要特点是学习到的是上下文独立的静态词嵌入，
+其主要代表为NNLM、word2vec、Glove等。
+这一类词嵌入通常采取浅层网络进行训练，而应用于下游任务时，整个模型的其余部分仍需要从头开始学习。
+因此，对于这一范式的PTMs没有必要采取深层神经网络进行训练，采取浅层网络加速训练也可以产生好的词嵌入。</p>
+
+<p>浅层词嵌入的主要缺陷为：</p>
+
+<ul>
+  <li>词嵌入与上下文无关，每个单词的嵌入向量始终是相同，因此不能解决一词多义的问题。</li>
+  <li>通常会出现OOV问题(Out-of-vocabulary)，为了解决这个问题，相关文献提出了字符级表示或sub-word表示，
+如CharCNN、FastText和 Byte-Pair Encoding。</li>
+</ul>
+
+<h4 id="预训练编码器">预训练编码器</h4>
+<p>第二类PTMs范式为预训练编码器，主要目的是通过一个预训练的编码器能够输出上下文相关的词向量，
+解决一词多义的问题。这一类预训练编码器输出的向量称之为「上下文相关的词嵌入」。</p>
+
+<p>PTMs中预训练编码器通常采用LSTM和Transformer（Transformer-XL）。
+其中Transformer又依据其attention-mask方式
+分为Transformer-Encoder和Transformer-Decoder两部分。
+此外，Transformer也可看作是一种图神经网络GNN。
+这一类「预训练编码器」范式的PTMs主要代表有ELMO、GPT-1、BERT、XLNet等。</p>
+
+<h3 id="按照类型进行分类">按照类型进行分类</h3>
+
+<p>按照类型可以分成三大类：监督学习、无监督学习和自监督学习</p>
+<ul>
+  <li>
+    <p>监督学习(Supervised learning, SL)是基于 input-output对组成的训练数据，学习将输入映射到输出的函数。</p>
+  </li>
+  <li>
+    <p>无监督学习(UL)是从未标记的数据中发现一些内在的知识，如簇(clusters)、密度(densities)、
+潜在表示(latent representation)。</p>
+  </li>
+  <li>
+    <p>自监督学习(SSL)是监督学习和无监督学习的混合。SSL的学习模式与监督学习完全相同，
+但是训练数据的标签是自动生成的。SSL的关键思想是以某种形式从其他部分输入预测任一部分的输入。
+例如，掩蔽语言模型(masked language model，MLM)是一个自监督的任务，
+它尝试通过一个句子中其余词去预测被MASK的词。</p>
+  </li>
+</ul>
+
+<h4 id="监督学习预训练模型">监督学习预训练模型</h4>
+
+<h4 id="无监督学习预训练模型">无监督学习预训练模型</h4>
+
+<h4 id="自监督学习预训练模型">自监督学习预训练模型</h4>
+
+<h3 id="ptms有哪些拓展">PTMs有哪些拓展？</h3>
+
+<h4 id="1引入知识">1、引入知识</h4>
+
+<p>PTMs通常从通用大型文本语料库中学习通用语言表示，但是缺少特定领域的知识。PTMs中设计一些辅助的预训练任务，
+将外部知识库中的领域知识整合到PTMs中被证明是有效的。</p>
+
+<p>ERNIE-THU将在知识图谱中预先训练的实体嵌入与文本中相应的实体提及相结合，以增强文本表示。
+由于语言表征的预训练过程和知识表征过程有很大的不同，会产生两个独立的向量空间。为解决上述问题，
+在有实体输入的位置，将实体向量和文本表示通过非线性变换进行融合，以融合词汇、句法和知识信息。
+LIBERT（语言知识的BERT）通过附加的语言约束任务整合了语言知识。
+SentiLR集成了每个单词的情感极性，以将MLM扩展到标签感知MLM（LA-MLM），ABSA任务上都达到SOTA。
+SenseBERT 不仅能够预测被mask的token，还能预测它们在给定语境下的实际含义。
+使用英语词汇数据库 WordNet 作为标注参照系统，预测单词在语境中的实际含义，显著提升词汇消歧能力。
+KnowBERT 与实体链接模型以端到端的方式合并实体表示。
+KG-BERT显示输入三元组形式，采取两种方式进行预测：构建三元组识别和关系分类，
+共同优化知识嵌入和语言建模目标。这些工作通过实体嵌入注入知识图的结构信息。
+K-BERT将从KG提取的相关三元组显式地注入句子中，以获得BERT的扩展树形输入。
+K-Adapter通过针对不同的预训练任务独立地训练不同的适配器来注入多种知识，从而可以不断地注入知识，
+以解决注入多种知识时可能会出现灾难性遗忘问题。
+此外，这类PTMs还有WKLM、KEPLER和等。</p>
+<h4 id="2模型压缩">2、模型压缩</h4>
+
+<p>由于预训练的语言模型通常包含至少数亿个参数，
+因此很难将它们部署在现实应用程序中的在线服务和资源受限的设备上。
+模型压缩是减小模型尺寸并提高计算效率的有效方法。</p>
+
+<p>5种PTMs的压缩方法为：</p>
+
+<ul>
+  <li>pruning（剪枝）：将模型中影响较小的部分舍弃。
+如Compressing BERT，还有结构化剪枝 LayerDrop，其在训练时进行Dropout，预测时再剪掉Layer，
+不像知识蒸馏需要提前固定student模型的尺寸大小。</li>
+  <li>quantization（量化）：将高精度模型用低精度来表示；
+如Q-BERT和Q8BERT，量化通常需要兼容的硬件。</li>
+  <li>parameter sharing （参数共享）：相似模型单元间的参数共享；
+ALBERT主要是通过矩阵分解和跨层参数共享来做到对参数量的减少。</li>
+  <li>module replacing（模块替换）：
+BERT-of-Theseus根据伯努利分布进行采样，决定使用原始的大模型模块还是小模型，只使用task loss。</li>
+  <li>knowledge distillation （知识蒸馏）：通过一些优化目标从大型、知识丰富、
+fixed的teacher模型学习一个小型的student模型。蒸馏机制主要分为3种类型：
+①从软标签蒸馏：DistilBERT、EnsembleBERT
+②从其他知识蒸馏：TinyBERT、BERT-PKD、MobileBERT 、 MiniLM 、DualTrain
+③蒸馏到其他结构：Distilled-BiLSTM</li>
+</ul>
+
+<h4 id="3多模态">3、多模态</h4>
+
+<p>随着PTMs在NLP领域的成功，许多研究者开始关注多模态领域的PTMs，
+主要为通用的视觉和语言特征编码表示而设计。多模态的PTMs在一些庞大的跨模式数据语料库
+（带有文字的语音、视频、图像）上进行了预训练，如带有文字的语音、视频、图像等，
+主要有 VideoBERT、CBT 、UniViLM、 ViL-BERT 、 LXMERT、 VisualBERT 、 B2T2、
+Unicoder-VL 、UNITER、 VL-BERT 、 SpeechBERT。</p>
+
+<h4 id="4领域预训练">4、领域预训练</h4>
+
+<p>大多数PTM都在诸如Wikipedia的通用语料中训练，而在领域化的特定场景会收到限制。如基于生物医学文本的BioBERT，
+基于科学文本的SciBERT，基于临床文本的Clinical-BERT。一些工作还尝试将PTMs适应目标领域的应用，
+如医疗实体标准化、专利分类PatentBERT、情感分析SentiLR关键词提取。</p>
+
+<h4 id="5多语言和特定语言">5、多语言和特定语言</h4>
+
+<p>学习跨语言共享的多语言文本表示形式对于许多跨语言的NLP任务起着重要的作用。</p>
+
+<p>Multilingual-BERT在104种 Wikipedia文本上进行MLM训练（共享词表），每个训练样本都是单语言文档，
+没有专门设计的跨语言目标，也没有任何跨语言数据，M-BERT也可以很好的执行跨语言任务。
+XLM通过融合跨语言任务（翻译语言模型）改进了M-BERT，该任务通过拼接平行语料句子对进行MLM训练。
+Unicoder提出了3种跨语言预训练任务：</p>
+<ul>
+  <li>cross-lingual word recovery；</li>
+  <li>cross-lingual paraphrase classification;</li>
+  <li>cross-lingual masked language model.
+虽然多语言的PTMs在跨语言上任务表现良好，但用单一语言训练的PTMs明显好于多语言的PTMs。
+此外一些单语言的PTMs被提出：BERT-wwm， ZEN, NEZHA , ERNIE-Baidu, BERTje, CamemBERT, FlauBERT, RobBERT。</li>
+</ul>
+
+<p>2.2 ELMo:Deep contextualized word representations
+ELMo(Embeddings from Langauge Model)的思想非常简单，通过双向拼接的LSTM结构作为模型的特征提取表示模块，然后使用LM作为预训练第一个阶段的任务，为了将下游不同的任务融合进去，论文在上层融合了不同的NLP任务，需要注意的是，作者在融合不同任务的时候，并没有统一的使用最顶层的向量表示，而是针对不同的任务使用了不同层的向量表示。</p>
+
+<p>elmo的优点在于初步解决了之前的词向量表示中所不能解决的一词多义的问题，因为每个词向量表示都是根据其周围的词在句子中动态获得的。</p>
+
+<p>2.3 GPT:Improving Language Understandingby Generative Pre-Training
+GPT是Open AI的工作，开创性的使用了Transformer来作为预训练模型的特征提取模块，在NLU相关的下游任务中取得了非常好的效果。模型也是十分简洁的，预训练部分使用单向的LM，微调阶段也是十分简洁，将一些非序列而任务融合到了一个框架中去，采用了分隔符标记拼接的方式来统一处理。</p>
+
+<p>2.4 GPT2.0:Language Models are Unsupervised Multitask Learners
+由于GPT2.0在GPT基础上做的，除了使用了多任务以及超大预训练数据集以及超大的模型之外，在思想上并没有很大的创新，这里就不详细展开了。</p>
+
+<p>2.5 BERT: Pre-training of Deep Bidirectional Transformers for Lanuage Understanding
+BERT这篇论文在组会上已经多次讨论了，其中模型结构以及预训练任务大家都早已非常熟悉，这里不再赘述。</p>
+
+<p>这里稍微说下BERT用于预训练中的MLM任务，以及为什么可以称之为双向的语言模型。理想情况下，我们都希望一个词的语义特征表示是由其上下文共同编码决定的。显然上面基于链式法则的单向语言模型是不能够学习到双向语义表示的，因为在预测xt时，无论是正向的语言模型还是反向的语言模型，都只由该时刻一侧的序列决定，所以模型自然不能将双向的信息编码到中心词中去。而BERT通过借鉴close-test这样的任务思想，借助Self-Attention Mask，巧妙的解决了上述问题。BERT可以形式化最大如下似然函数:</p>
+
+<p>θ=argmax∑x∈CorPθ(x|x¯¯¯)=argmax∑x∈Cor∑tm(t)⋅Pθ(xt|x¯¯¯)=∑t=1Tmtlogexp(Hθ(x^)Tte(xt))∑x′exp(Hθ(x^)Tte(x′))
+其中</p>
+
+<p>m(t)={1,xtmasked0,otherwise
+Hθ(x)=[Hθ(x)1，Hθ(x)2，。。。，Hθ(x)T]，这里的Hθ是Transformer结构的编码器。</p>
+
+<p>具体的x¯¯¯是通过Transformer的Encoder部分来完成特征提取的，在预测当前单词t时刻单词时，通过Attention Mask保证xt时刻的信息不泄露。由于Self-Attention计算是对整个句子进行query操作，所以就把双向的信息编码进去了。通过这样的任务转化，BERT就建模到了双向的语义表示信息，但是BERT也面临着如下的为解决问题:</p>
+
+<p>如果在Transformer不加入Position Encoding这一操作，那么该特征提取模块实际上就是One-Hot表示而已，不能建模句子内部的相对位置信息。这也是为什么需要加入额外的位置嵌入信息这一操作。
+可以看出在进行序列预测时，上述的建模实际上有默认被Mask掉的部分各自相互独立，显然这是不合理的。
+同时，在单步预测被mask掉位置的单词时，将其他位置的mask信息信息也编码了进来，这样做有优点，也有弊端，优点是相当于人为的引进了噪声，可以增强模型的鲁棒性，缺点只能通过启发式的方法设置MASK的数量占比。无法确定究竟引入多少的MASK是合适的。
+MASS:Masked Sequence to Sequence Pre-training for Language Generation
+要注意的是，包括BERT在内的预训练模型大多都在一些NLU任务上表现优异，这些任务的基本都是一些序列分类任务，当然，也有很多人在一些序列标注任务上做过一些尝试，但是像机器翻译，文本摘要或者其他的序列生成任务，这些预训练模型便显的力不从心了。根本的原因是:这些模型都只是由一个Encoder结构组成，对于标注任务单独一个Encoder还是可以解决的，但是像序列生成这样的任务便无能为力了。</p>
+
+<p>MASS就是为了解决这一问题而提出的预训练模型。实际上MASS的思想很简单，既然一个单独的Encoder不能解决，那么再叠加一个Decoder作为解码部分不就可以了，因此MASS在预训练模型部分添加了Decoder结构，并将最优化目标设为如下形式:</p>
+
+<p>θ=argmaxLθ(X)=∑x∈XlogPθ(xu:v|x/u:v)=∑x∈X∑t=uvlogPθ(xu:vt|xu:v&lt;t,x/u:v)
+建模这样的最大似然有两个好处，一个是BERT时各Mask位置相互独立这一假设消失了，另外一个就是不用再引入这么多Mask信息了。</p>
+
+<p>2.6 UniLM:Unified Language Model Pre-training
+UniLM的巧妙之处在于将上面提到的三种语言模型都集成到了一个模型中去，而且仅仅用了Encoder结构。</p>
+
+<p>预训练采用了1/3的双向语言模型，1/3的序列到序列语言模型、各占1/6的从左到右的以及从右到左的单向语言模型。同时也像BERT一样集成了NSP任务。</p>
+:ET
