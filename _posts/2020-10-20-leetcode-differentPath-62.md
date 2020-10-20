@@ -2,7 +2,7 @@
 layout: post
 title:  leetcode-62-不同路径
 categories: leetcode
-tags:  leetcode
+tags:  leetcode 动态规划
 author: Keyon
 ---
 * content
