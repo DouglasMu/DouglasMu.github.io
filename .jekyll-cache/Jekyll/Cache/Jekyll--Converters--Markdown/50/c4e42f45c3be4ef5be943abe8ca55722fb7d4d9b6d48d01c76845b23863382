@@ -1,0 +1,7 @@
+I"W
+<p>GPT是“Generative Pre-Training”的简称，从名字看其含义是指的生成式的预训练。
+GPT也采用两阶段过程，第一个阶段是利用语言模型进行预训练，
+第二阶段通过Fine-tuning的模式解决下游任务。</p>
+
+<p><img src="https://i.loli.net/2020/10/07/lucAkm81qT2GoQM.png" alt="gpt_1.png" /></p>
+:ET

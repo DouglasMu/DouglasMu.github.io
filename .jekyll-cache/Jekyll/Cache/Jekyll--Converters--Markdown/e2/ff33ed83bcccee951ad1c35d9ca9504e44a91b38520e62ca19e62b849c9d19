@@ -1,0 +1,338 @@
+I"I<ul id="markdown-toc">
+  <li><a href="#embedding" id="markdown-toc-embedding">Embedding</a></li>
+  <li><a href="#masked-lm" id="markdown-toc-masked-lm">Masked LM</a></li>
+  <li><a href="#next-sentence-prediction" id="markdown-toc-next-sentence-prediction">Next Sentence Prediction</a></li>
+  <li><a href="#bert的评价" id="markdown-toc-bert的评价">BERT的评价</a>    <ul>
+      <li><a href="#总结下bert的主要贡献" id="markdown-toc-总结下bert的主要贡献">总结下BERT的主要贡献：</a></li>
+      <li><a href="#bert优点" id="markdown-toc-bert优点">BERT优点</a></li>
+      <li><a href="#bert缺点" id="markdown-toc-bert缺点">BERT缺点</a></li>
+    </ul>
+  </li>
+  <li><a href="#评价" id="markdown-toc-评价">评价</a></li>
+  <li><a href="#transformer" id="markdown-toc-transformer">transformer</a>    <ul>
+      <li><a href="#encoder" id="markdown-toc-encoder">Encoder</a></li>
+      <li><a href="#decoder" id="markdown-toc-decoder">Decoder</a></li>
+      <li><a href="#positional-encoding" id="markdown-toc-positional-encoding">Positional Encoding</a></li>
+      <li><a href="#attention" id="markdown-toc-attention">Attention</a></li>
+      <li><a href="#selfattention" id="markdown-toc-selfattention">SelfAttention</a></li>
+      <li><a href="#bert原理" id="markdown-toc-bert原理">BERT原理</a></li>
+    </ul>
+  </li>
+  <li><a href="#相关资料" id="markdown-toc-相关资料">相关资料</a></li>
+</ul>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+</script>
+
+<p>bert模型</p>
+
+<p>Bert采用和GPT完全相同的两阶段模型，首先是语言模型预训练；
+其次是使用Fine-Tuning模式解决下游任务。
+和GPT的最主要不同在于在预训练阶段采用了类似ELMO的双向语言模型，
+即双向的Transformer，当然另外一点是语言模型的数据规模要比GPT大。</p>
+
+<p><img src="https://i.loli.net/2020/10/07/8sh4RuIQY9NmiMb.png" alt="bert_1.png" /></p>
+
+<p>对比OpenAI GPT(Generative pre-trained transformer)，
+BERT是双向的Transformer block连接；就像单向rnn和双向rnn的区别，直觉上来讲效果会好一些。
+对比ELMo，虽然都是“双向”，但目标函数其实是不同的。
+BERT预训练模型分为以下三个步骤：Embedding、Masked LM、Next Sentence Prediction</p>
+<h4 id="embedding">Embedding</h4>
+<p>这里的Embedding由三种Embedding求和而成：
+<img src="https://i.loli.net/2020/10/07/yodAta9OMpbIKX7.png" alt="bert_2.png" /></p>
+
+<ul>
+  <li>Token Embeddings是词向量，第一个单词是CLS标志，可以用于之后的分类任务</li>
+  <li>Segment Embeddings用来区别两种句子，因为预训练不光做LM还要做以两个句子为输入的分类任务</li>
+  <li>Position Embeddings和之前文章中的Transformer不一样，不是三角函数而是学习出来的</li>
+</ul>
+
+<h4 id="masked-lm">Masked LM</h4>
+
+<p>MLM可以理解为完形填空，作者会随机mask每一个句子中15%的词，用其上下文来做预测，
+例如：my dog is hairy → my dog is [MASK]</p>
+
+<p>此处将hairy进行了mask处理，然后采用非监督学习的方法预测mask位置的词是什么，
+但是该方法有一个问题，因为是mask15%的词，其数量已经很高了，
+这样就会导致某些词在fine-tuning阶段从未见过，为了解决这个问题，作者做了如下的处理：</p>
+
+<p>80%是采用[mask]，my dog is hairy → my dog is [MASK]</p>
+
+<p>10%是随机取一个词来代替mask的词，my dog is hairy -&gt; my dog is apple</p>
+
+<p>10%保持不变，my dog is hairy -&gt; my dog is hairy</p>
+
+<p>注意：这里的10%是15%需要mask中的10%</p>
+
+<p>那么为啥要以一定的概率使用随机词呢？
+这是因为transformer要保持对每个输入token分布式的表征，
+否则Transformer很可能会记住这个[MASK]就是”hairy”。至于使用随机词带来的负面影响，
+文章中解释说,所有其他的token(即非”hairy”的token)共享15%*10% = 1.5%的概率，
+其影响是可以忽略不计的。Transformer全局的可视，又增加了信息的获取，但是不让模型获取全量信息。</p>
+
+<h4 id="next-sentence-prediction">Next Sentence Prediction</h4>
+<p>选择一些句子对A与B，其中50%的数据B是A的下一条句子，
+剩余50%的数据B是语料库中随机选择的，学习其中的相关性，
+添加这样的预训练的目的是目前很多NLP的任务比如QA和NLI都需要理解两个句子之间的关系，
+从而能让预训练的模型更好的适应这样的任务。</p>
+
+<p>个人理解：</p>
+
+<p>Bert先是用Mask来提高视野范围的信息获取量，增加duplicate再随机Mask，
+这样跟RNN类方法依次训练预测没什么区别了除了mask不同位置外；
+全局视野极大地降低了学习的难度，然后再用A+B/C来作为样本，
+这样每条样本都有50%的概率看到一半左右的噪声；
+但直接学习Mask A+B/C是没法学习的，因为不知道哪些是噪声，
+所以又加上next_sentence预测任务，与MLM同时进行训练，
+这样用next来辅助模型对噪声/非噪声的辨识，用MLM来完成语义的大部分的学习。</p>
+
+<h3 id="bert的评价">BERT的评价</h3>
+<h4 id="总结下bert的主要贡献">总结下BERT的主要贡献：</h4>
+
+<p>引入了Masked LM，使用双向LM做模型预训练。
+为预训练引入了新目标NSP，它可以学习句子与句子间的关系。
+进一步验证了更大的模型效果更好： 12 –&gt; 24 层。
+为下游任务引入了很通用的求解框架，不再为任务做模型定制。
+刷新了多项NLP任务的记录，引爆了NLP无监督预训练技术。</p>
+
+<h4 id="bert优点">BERT优点</h4>
+
+<p>Transformer Encoder因为有Self-attention机制，因此BERT自带双向功能。
+因为双向功能以及多层Self-attention机制的影响，使得BERT必须使用Cloze版的语言模型Masked-LM来
+完成token级别的预训练。
+为了获取比词更高级别的句子级别的语义表征，
+BERT加入了Next Sentence Prediction来和Masked-LM一起做联合训练。
+为了适配多任务下的迁移学习，BERT设计了更通用的输入层和输出层。
+微调成本小。</p>
+<h4 id="bert缺点">BERT缺点</h4>
+
+<p>task1的随机遮挡策略略显粗犷，推荐阅读
+《Data Nosing As Smoothing In Neural Network Language Models》。
+[MASK]标记在实际预测中不会出现，训练时用过多[MASK]影响模型表现。每个batch只有15%的token被预测，
+所以BERT收敛得比left-to-right模型要慢（它们会预测每个token）。
+BERT对硬件资源的消耗巨大（大模型需要16个tpu，历时四天；更大的模型需要64个tpu，历时四天。</p>
+
+<h3 id="评价">评价</h3>
+
+<p>Bert是NLP里里程碑式的工作，对于后面NLP的研究和工业应用会产生长久的影响，这点毫无疑问。
+但是从上文介绍也可以看出，从模型或者方法角度看，Bert借鉴了ELMO，GPT及CBOW，
+主要提出了Masked 语言模型及Next Sentence Prediction，但是这里Next Sentence Prediction
+基本不影响大局，而Masked LM明显借鉴了CBOW的思想。所以说Bert的模型没什么大的创新，
+更像最近几年NLP重要进展的集大成者，这点如果你看懂了上文估计也没有太大异议，
+如果你有大的异议，杠精这个大帽子我随时准备戴给你。如果归纳一下这些进展就是：</p>
+
+<p>首先是两阶段模型，
+第一阶段双向语言模型预训练，这里注意要用双向而不是单向，
+第二阶段采用具体任务Fine-tuning或者做特征集成；</p>
+
+<p>第二是特征抽取要用Transformer作为特征提取器而不是RNN或者CNN；</p>
+
+<p>第三，双向语言模型可以采取CBOW的方法去做（当然我觉得这个是个细节问题，不算太关键，
+前两个因素比较关键）。
+Bert最大的亮点在于效果好及普适性强，几乎所有NLP任务都可以套用Bert这种两阶段解决思路，
+而且效果应该会有明显提升。可以预见的是，未来一段时间在NLP应用领域，Transformer将占据主导地位，
+而且这种两阶段预训练方法也会主导各种应用。</p>
+
+<h3 id="transformer">transformer</h3>
+
+<p>和大多数seq2seq模型一样，transformer的结构也是由encoder和decoder组成。
+<img src="https://i.loli.net/2020/10/08/cUzHhR5XOma4JIk.png" alt="transformer.png" /></p>
+
+<h4 id="encoder">Encoder</h4>
+
+<p>Encoder由N=6个相同的layer组成，layer指的就是上图左侧的单元，
+最左边有个“Nx”，这里是x6个。每个Layer由两个sub-layer组成，
+分别是multi-head self-attention mechanism和fully connected feed-forward network。
+其中每个sub-layer都加了residual connection和normalisation，
+因此可以将sub-layer的输出表示为：</p>
+
+\[sub\_layer\_output = LayerNorm(x+(SubLayer(x)))\]
+
+<p>接下来按顺序解释这两个sub-layer</p>
+<ul>
+  <li>Multi-head self-attention</li>
+</ul>
+
+<p>attention可由以下形式表示：</p>
+
+\[MultiHead(Q,K,V)=Concat(head_1,···，head_h)W^O\]
+
+\[head_i=Attention(QW_i^Q,KW_i^k,VW_i^V)\]
+
+<p>self-attention则是取Q，K，V相同。
+另外文章中attention的计算采用了scaled dot-product，即：</p>
+
+\[Attention(Q,K,V)=softmax(\frac {QK^T}{\sqrt{d_k}})\]
+
+<p>作者同样提到了另一种复杂度相似但计算方法additive attention，
+在 \(d_k\)很小的时候和dot-product结果相似，\(d_k\)大的时候，
+如果不进行缩放则表现更好，但dot-product的计算速度更快，
+进行缩放后可减少影响（由于softmax使梯度过小，具体可见论文中的引用）。</p>
+
+<ul>
+  <li>Position-wise feed-forward networks
+这层主要是提供非线性变换。Attention输出的维度是[bsz*seq_len, num_heads*head_size]，
+第二个sub-layer是个全连接层，之所以是position-wise是因为过线性层时每个位置i的变换参数是一样的。</li>
+</ul>
+
+<h4 id="decoder">Decoder</h4>
+
+<p>Decoder和Encoder的结构差不多，但是多了一个attention的sub-layer，
+这里先明确一下decoder的输入输出和解码过程：</p>
+
+<p>输出：对应i位置的输出词的概率分布
+输入：encoder的输出 &amp; 对应i-1位置decoder的输出。所以中间的attention不是self-attention，
+它的K，V来自encoder，Q来自上一位置decoder的输出</p>
+
+<p>解码：这里要特别注意一下，编码可以并行计算，一次性全部encoding出来，
+但解码不是一次把所有序列解出来的，而是像rnn一样一个一个解出来的，
+因为要用上一个位置的输入当作attention的query</p>
+
+<p>明确了解码过程之后最上面的图就很好懂了，这里主要的不同就是新加的另外要说一下新加的attention
+多加了一个mask，因为训练时的output都是ground truth，这样可以确保预测第i个位置时不会接触到未来的信息。</p>
+
+<p>加了mask的attention原理如图（另附multi-head attention）：
+<img src="https://i.loli.net/2020/10/08/c8yKXWRneAL2tfm.jpg" alt="bert2.jpg" /></p>
+
+<h4 id="positional-encoding">Positional Encoding</h4>
+<p>除了主要的Encoder和Decoder，还有数据预处理的部分。Transformer抛弃了RNN，而RNN最大的优点就是在时间序列上对数据的抽象，所以文章中作者提出两种Positional Encoding的方法，将encoding后的数据与embedding数据求和，加入了相对位置信息。</p>
+
+<p>这里作者提到了两种方法：</p>
+
+<ul>
+  <li>1、用不同频率的sine和cosine函数直接计算</li>
+  <li>2、学习出一份positional embedding（<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/abs/1705.03122">参考文献</a>）</li>
+</ul>
+
+<p>经过实验发现两者的结果一样，所以最后选择了第一种方法，公式如下：</p>
+
+\[PE_{pos,2i}=sin(\frac{pos}{10000^{\frac{2i}{d_{model}}}})\]
+
+\[PE_{pos,2i+1}=cos(\frac{pos}{10000^{\frac{2i}{d_{model}}}})\]
+
+<p>作者提到，方法1的好处有两点：</p>
+<ul>
+  <li>1、任意位置的 \(PE_{pos+k}\) 都可以被 \(PE_{pos}\) 的线性函数表示</li>
+  <li>2、如果是学习到的positional embedding，会像词向量一样受限于词典大小。
+也就是只能学习到“位置2对应的向量是(1,1,1,2)”这样的表示。所以用三角公式明显不受序列长度的限制，
+也就是可以对比所遇到序列的更长的序列进行表示。</li>
+</ul>
+
+<p>Transformer是第一个用纯attention搭建的模型，不仅计算速度更快，
+在翻译任务上获得了更好的结果，也为后续的BERT模型做了铺垫。
+Transformer是BERT的核心模块，在BERT推出后，涌现了越来越多的研究成果</p>
+
+<h4 id="attention">Attention</h4>
+
+<p>Attention，正如其名，注意力，该模型在decode阶段，会选择最适合当前节点的context作为输入。
+Attention与传统的Seq2Seq模型主要有以下两点不同。</p>
+
+<ul>
+  <li>
+    <p>encoder提供了更多的数据给到decoder，encoder会把所有的节点的hidden state提供给decoder，
+而不仅仅只是encoder最后一个节点的hidden state。</p>
+  </li>
+  <li>
+    <p>decoder并不是直接把所有encoder提供的hidden state作为输入，而是采取一种选择机制，
+把最符合当前位置的hidden state选出来，具体的步骤如下</p>
+    <ul>
+      <li>确定哪一个hidden state与当前节点关系最为密切</li>
+      <li>计算每一个hidden state的分数值（具体怎么计算我们下文讲解）</li>
+      <li>对每个分数值做一个softmax的计算，这能让相关性高的hidden state的分数值更大，
+相关性低的hidden state的分数值更低
+<img src="https://i.loli.net/2020/10/08/epz4k5CBAh8Mxin.gif" alt="attention.gif" />
+        <h4 id="selfattention">SelfAttention</h4>
+        <p>接下来我们详细看一下self-attention，其思想和attention类似，
+但是self-attention是Transformer用来将其他相关单词的“理解”转换成我们正常理解的单词的一种思路，
+我们看个例子：</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>The animal didn’t cross the street because it was too tired</p>
+
+<p>这里的it到底代表的是animal还是street呢，对于我们来说能很简单的判断出来，
+但是对于机器来说，是很难判断的，self-attention就能够让机器把it和animal联系起来</p>
+
+<p>接下来我们看下详细的处理过程。</p>
+
+<ul>
+  <li>首先，self-attention会计算出三个新的向量，在论文中，向量的维度是512维，
+我们把这三个向量分别称为Query、Key、Value，这三个向量是用embedding向量与一个矩阵相乘得到的结果，
+这个矩阵是随机初始化的，维度为（64，512）注意第二个维度需要和embedding的维度一样，
+其值在BP的过程中会一直进行更新，得到的这三个向量的维度是64低于embedding维度的。</li>
+</ul>
+
+<p><img src="https://i.loli.net/2020/10/08/d2npKLY6XvxZ3eQ.png" alt="selfattention1.png" /></p>
+
+<ul>
+  <li>计算self-attention的分数值，该分数值决定了当我们在某个位置encode一个词时，
+对输入句子的其他部分的关注程度。这个分数值的计算方法是Query与Key做点乘，
+以下图为例，首先我们需要针对Thinking这个词，计算出其他词对于该词的一个分数值，
+首先是针对于自己本身即q1·k1，然后是针对于第二个词即q1·k2</li>
+</ul>
+
+<p><img src="https://i.loli.net/2020/10/08/EQVat1OKvFBCNWc.png" alt="selfattention2.png" /></p>
+
+<ul>
+  <li>接下来，把点成的结果除以一个常数，这里我们除以8，
+这个值一般是采用上文提到的矩阵的第一个维度的开方即64的开方8，当然也可以选择其他的值，
+然后把得到的结果做一个softmax的计算。得到的结果即是每个词对于当前位置的词的相关性大小，
+当然，当前位置的词相关性肯定会会很大</li>
+</ul>
+
+<p><img src="https://i.loli.net/2020/10/08/vYOikzQG5pDJ7K9.png" alt="selfattention3.png" /></p>
+
+<ul>
+  <li>下一步就是把Value和softmax得到的值进行相乘，并相加，
+得到的结果即是self-attetion在当前节点的值。</li>
+</ul>
+
+<p><img src="https://i.loli.net/2020/10/08/gNTeir6Qjn1shEW.png" alt="selfattention4.png" /></p>
+
+<ul>
+  <li>在实际的应用场景，为了提高计算速度，我们采用的是矩阵的方式，
+直接计算出Query, Key, Value的矩阵，然后把embedding的值与三个矩阵直接相乘，
+把得到的新矩阵Q与K相乘，乘以一个常数，做softmax操作，最后乘上V矩阵</li>
+</ul>
+
+<p><img src="https://i.loli.net/2020/10/08/ZDym26RwbkxcN1p.png" alt="selfattention5.png" /></p>
+
+<p><img src="https://i.loli.net/2020/10/08/rmfjbdeDLYMSNGa.png" alt="selfattention6.png" /></p>
+
+<p>这种通过 query 和 key 的相似性程度来确定 value 的权重分布的方法被称为scaled dot-product attention。
+其实scaled dot-Product attention就是我们常用的使用点积进行相似度计算的attention，
+只是多除了一个（为K的维度）起到调节作用，使得内积不至于太大。</p>
+
+<p><img src="https://i.loli.net/2020/10/08/I56ctvNVW17Od9K.png" alt="selfattention7.png" /></p>
+
+<h4 id="bert原理">BERT原理</h4>
+
+<p>从创新的角度来看，bert其实并没有过多的结构方面的创新点，其和GPT一样均是采用的transformer的结构，
+相对于GPT来说，其是双向结构的，而GPT是单向的</p>
+
+<ul>
+  <li>
+    <p>elmo：将上下文当作特征，但是无监督的语料和我们真实的语料还是有区别的，
+不一定的符合我们特定的任务，是一种双向的特征提取。</p>
+  </li>
+  <li>
+    <p>openai gpt就做了一个改进，也是通过transformer学习出来一个语言模型，不是固定的，
+通过任务 finetuning,用transfomer代替elmo的lstm。
+openai gpt其实就是缺少了encoder的transformer。当然也没了encoder与decoder之间的attention。</p>
+  </li>
+  <li>
+    <p>openAI gpt虽然可以进行fine-tuning,但是有些特殊任务与pretraining输入有出入，
+单个句子与两个句子不一致的情况，很难解决，还有就是decoder只能看到前面的信息。
+其次bert在多方面的nlp任务变现来看效果都较好，具备较强的泛化能力，
+对于特定的任务只需要添加一个输出层来进行fine-tuning即可。</p>
+  </li>
+</ul>
+
+<h3 id="相关资料">相关资料</h3>
+<p><a href="https://blog.csdn.net/sunhua93/article/details/102764783">转载自博客</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/48612853">bert详解(知乎)</a></p>
+
+<p><a href="https://zhuanlan.zhihu.com/p/34781297">《attention is all you need》解读(知乎)</a></p>
+:ET

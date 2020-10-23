@@ -1,0 +1,69 @@
+---
+layout: post
+title:  leetcode-63-不同路径2
+categories: leetcode
+tags:  leetcode 动态规划
+author: Keyon
+---
+* content
+{:toc}
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？
+
+
+
+网格中的障碍物和空位置分别用 1 和 0 来表示。
+
+说明：m 和 n 的值均不超过 100。
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/unique-paths-ii
+
+
+
+
+
+
+
+
+````
+class Solution:
+    def uniquePathsWithObstacles(self, obstacleGrid):
+        m=len(obstacleGrid)
+        n=len(obstacleGrid[0])
+        if m==1 and n==1:
+            if obstacleGrid[0][0]==0:
+                return 1
+            else:
+                return 0
+        if obstacleGrid[0][0]==1:
+            return 0
+        else:
+            obstacleGrid[0][0]=1
+
+        for i in range(1,n):
+            if obstacleGrid[0][i]==1:
+                obstacleGrid[0][i] = 0
+            else:
+                obstacleGrid[0][i] = 1
+        for i in range(1,m):
+            if obstacleGrid[i][0]==1:
+                obstacleGrid[i][0] = 0
+            else:
+                obstacleGrid[i][0] = 1
+        # print(obstacleGrid)
+        for i in range(1,m):
+            for j in range(1,n):
+                if obstacleGrid[i][j]==1:
+                    obstacleGrid[i][j]=0
+                else:
+                    obstacleGrid[i][j]=obstacleGrid[i-1][j]+obstacleGrid[i][j-1]
+        return obstacleGrid[-1][-1]
+solution = Solution()
+matrix = [[0,0],[1,1],[0,0]]
+print(solution.uniquePathsWithObstacles(matrix))
+````

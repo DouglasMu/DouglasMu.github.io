@@ -1,0 +1,12 @@
+I"#<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+</script>
+
+<p>bert模型</p>
+
+<p>Bert采用和GPT完全相同的两阶段模型，首先是语言模型预训练；
+其次是使用Fine-Tuning模式解决下游任务。
+和GPT的最主要不同在于在预训练阶段采用了类似ELMO的双向语言模型，
+即双向的Transformer，当然另外一点是语言模型的数据规模要比GPT大。</p>
+
+<p><img src="https://i.loli.net/2020/10/07/8sh4RuIQY9NmiMb.png" alt="bert_1.png" /></p>
+:ET

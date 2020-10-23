@@ -1,0 +1,359 @@
+I"�i<ul id="markdown-toc">
+  <li><a href="#知识图谱对话系统的三个讨论重点" id="markdown-toc-知识图谱对话系统的三个讨论重点">知识图谱对话系统的三个讨论重点</a>    <ul>
+      <li><a href="#基于知识的对话系统有哪些应用场景" id="markdown-toc-基于知识的对话系统有哪些应用场景">基于知识的对话系统有哪些应用场景？</a></li>
+      <li><a href="#知识如何结合到对话生成过程中有哪些方式具体怎么做" id="markdown-toc-知识如何结合到对话生成过程中有哪些方式具体怎么做">知识如何结合到对话生成过程中，有哪些方式，具体怎么做？</a>        <ul>
+          <li><a href="#知识图嵌入knowledge-graph-embedding" id="markdown-toc-知识图嵌入knowledge-graph-embedding">知识图嵌入（knowledge graph embedding）</a>            <ul>
+              <li><a href="#transe" id="markdown-toc-transe">transE</a></li>
+              <li><a href="#transh" id="markdown-toc-transh">transH</a></li>
+              <li><a href="#transd" id="markdown-toc-transd">transD</a></li>
+            </ul>
+          </li>
+          <li><a href="#意图识别答案检索" id="markdown-toc-意图识别答案检索">意图识别+答案检索</a>            <ul>
+              <li><a href="#searching-questions-by-identifying-question-topic-and-question-focus" id="markdown-toc-searching-questions-by-identifying-question-topic-and-question-focus">Searching questions by identifying question topic and question focus</a></li>
+            </ul>
+          </li>
+          <li><a href="#end-to-end模型" id="markdown-toc-end-to-end模型">end-to-end模型</a>            <ul>
+              <li><a href="#a-syntactic-tree-matching-approach-to-finding-similar-questions-in-community-based-qa-services" id="markdown-toc-a-syntactic-tree-matching-approach-to-finding-similar-questions-in-community-based-qa-services">A syntactic tree matching approach to finding similar questions in community-based qa services</a></li>
+              <li><a href="#opendialkgexplainable-conversational-reasoning-with-attention-based-walks-over-knowledge-graph" id="markdown-toc-opendialkgexplainable-conversational-reasoning-with-attention-based-walks-over-knowledge-graph">OpenDialKG:Explainable Conversational Reasoning with Attention-based Walks over Knowledge Graph</a></li>
+              <li><a href="#do-neural-dialog-systems-use-the-conversation-history-effectively-an-empirical-study" id="markdown-toc-do-neural-dialog-systems-use-the-conversation-history-effectively-an-empirical-study">Do Neural Dialog Systems Use the Conversation History Effectively? An Empirical Study</a></li>
+              <li><a href="#constructing-interpretive-spatio-temporal-features-for-multi-turn-response-selection" id="markdown-toc-constructing-interpretive-spatio-temporal-features-for-multi-turn-response-selection">Constructing Interpretive Spatio-Temporal Features for Multi-Turn Response Selection</a></li>
+              <li><a href="#improving-multi-turn-dialogue-modelling-with-utterance-rewriter" id="markdown-toc-improving-multi-turn-dialogue-modelling-with-utterance-rewriter">Improving Multi-turn Dialogue Modelling with Utterance ReWriter</a></li>
+              <li><a href="#incremental-transformer-with-deliberation-decoder-for-document-grounded-conversations" id="markdown-toc-incremental-transformer-with-deliberation-decoder-for-document-grounded-conversations">Incremental Transformer with Deliberation Decoder for Document Grounded Conversations</a></li>
+              <li><a href="#one-time-of-interaction-may-not-be-enough-go-deep-with-an-interaction-over-interaction-network-for-response-selection-in-dialogues" id="markdown-toc-one-time-of-interaction-may-not-be-enough-go-deep-with-an-interaction-over-interaction-network-for-response-selection-in-dialogues">One Time of Interaction May Not Be Enough: Go Deep with an Interaction-over-Interaction Network for Response Selection in Dialogues</a></li>
+              <li><a href="#mie-a-medical-information-extractor-towards-medical-dialogues" id="markdown-toc-mie-a-medical-information-extractor-towards-medical-dialogues">MIE: A Medical Information Extractor towards Medical Dialogues</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#基于知识的对话系统还有哪些值得研究的问题" id="markdown-toc-基于知识的对话系统还有哪些值得研究的问题">基于知识的对话系统还有哪些值得研究的问题？</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="知识图谱对话系统的三个讨论重点">知识图谱对话系统的三个讨论重点</h2>
+
+<ul>
+  <li>
+    <p>基于知识的对话系统有哪些应用场景？</p>
+  </li>
+  <li>
+    <p>知识如何结合到对话生成过程中，有哪些方式，具体怎么做？</p>
+  </li>
+  <li>
+    <p>基于知识的对话系统还有哪些值得研究的问题？</p>
+  </li>
+</ul>
+
+<h3 id="基于知识的对话系统有哪些应用场景">基于知识的对话系统有哪些应用场景？</h3>
+
+<ul>
+  <li>苹果 Siri</li>
+</ul>
+
+<p>Siri 作为 iPhone 4S 推出时的一个亮点特征，定位是语音个人助理。在推出之时，
+引起了极大的轰动。虽然这么多年 Siri 的技术也不断提升，
+但他更大的价值是作为聊天机器人之门开启的开门砖，教育了用户和市场。
+回到刚刚的分类，Siri 其实是一个面向特定任务的对话系统。对接了很多本地服务如通讯录、
+音乐播放等以及 Web 服务如订餐、订票和导航等功能服务。针对这些服务意图，
+他通过实体驱动的自然语言理解（Natural LanguageUnderstanding, NLU）
+来识别问句中涉及到的对象和相关服务，从而实现特定任务下的多轮功能交互。
+对于解决不了的问题，即服务意图范畴外的需求，则直接调用搜索引擎返回相关答案来返回。
+随后，Siri 的核心人员 Dag Kittlaus 和 Adam Cheyer 于 2016 年推出了 Viv。Viv 
+被认为是 Siri 的升级版，虽然其在多服务组合，服务编排等方面做了不少亮点工作，
+但背后的基本原理和定位和 Siri 无差异。</p>
+
+<ul>
+  <li>微软小冰和小娜</li>
+</ul>
+
+<p>微软针对娱乐化和工具化这两个截然不同的定位，分别推出了小冰和小娜（Cortana）。
+小娜，作为嵌入在 Windows 或 Windows Mobile 等微软操作系统内核的语音个人助理，
+承载着类似 Siri 或 Viv 的角色，它的目的是提升用户的工作效率，据说 Cortana 有 1.5 亿多用户，
+这也使得微软吸引到 Bengio 这样的大师作为顾问加入。另一方面，
+小冰是微软中国团队推出的娱乐聊天机器人。她的人设是一位 16 岁的少女。
+小冰是一个基于搜索的回复检索系统。通过各种基于深度学习的语义匹配算法，
+从海量的问答对语料中返回最佳的回复（Message response 而非 Answer）。
+小冰也会不定期推出新的技能供大家使用，这些技能往往包含了微软团队在图像理解、
+语音和自然语言理解方面的各种小应用尝试。更值得一提的是：微软针对日本、
+北美和欧洲等市场陆续推出了具有不同人设的少女如 Rinna、Tay和 Zo，
+她们往往可以方便的通过微信、微博或 Twitter 等平台进行交流。</p>
+
+<ul>
+  <li>IBM Watson 系统</li>
+</ul>
+
+<p>Watson 系统是典型的问答系统，其由 IBM 研究院在 2011 年推出，
+参加美国知识竞赛Jeopardy!（危险边缘）并挑落人类冠军而名声大躁。
+相比 AlphaGo 或早年 IBM 研制的战胜卡斯帕罗夫的国际象棋人工智能程序深蓝，
+Watson 具有更清晰的商业路径。IBM 斥巨资成立医疗事业部，并与 MD Anderson 
+等知名医疗机构合作推出面对特定病种（尤其是癌症）的辅助诊断 AI 医生。
+与此同时，Ross Intelligence 依托 Watson 认知计算平台推出了法律咨询系统。
+回到技术层面，Watson 所用到的知识库是一个广义的知识库，不仅包含各种结构化知识、
+也包含各种文本语料和语言学知识。整个流程称为 Deep QA，包含问题分解、假设生成、
+基于证据的融合排序等关键步骤。这里的 Deep QA 并非指通过深度学习（Deep Learning）
+技术来提供问答。事实上，Watson 诞生于深度学习大热之前，
+这里的Deep 是指通过深度解析（Deep Parsing）来实现对问句的真正理解。</p>
+
+<ul>
+  <li>Facebook Messenger</li>
+</ul>
+
+<p>Facebook Messenger 是一个庞大的 Bot 平台，有非常活跃的开发者群体，
+平台包含上万种 Bots。针对 Messenger，
+第一，它在 2014 年收购了 wit.ai。Wit.ai 类似于谷歌所收购的 api.ai，
+包含大量的行业相关或场景相关的对话。基于以上高质量海量的对话数据，
+Facebook 基于深度学习技术推出了一个用于自然语言处理的框架叫 DeepText，
+用于自然语言表示学习和各种分类等任务。有名的 Fast Text 也包含在内。
+Facebook 更是基于Deep Text 推出了 CLUE，进一步提高了其易用性。
+通过以上的数据和技术积累，Facebook就可快速构建一个端到端的 Chatbot 或者问答系统。
+此外，还有一点需要强调的是，我们可以发现 Facebook Bot 的很多应用场景涉及到购物、
+递送礼物、预约参观和安排旅程等非实时任务，即相对比较复杂，但不要求马上得到反馈。
+传统的做法是，通过指派一名客服来对接，提供进一步的服务。对于这些非实时任务，
+Facebook 结合机器返回的自动化推荐结果和人工的进一步编辑和审核来保证用户体验的同时
+也降低了纯人工对接存在效率低、工作量大等弊端。而这也是近期大家很推崇的人机融合
+，即赋予人工智能新的内涵：ArtificialIntelligence+Human Intelligence（人类智能）
+=Augmented Intelligence（增强智能）。</p>
+
+<ul>
+  <li>亚马逊Alexa</li>
+</ul>
+
+<p>Alexa 作为亚马逊 Echo 智能音箱背后的 Bot 框架，通过 Skill Set 的形式不断扩展其功能，
+其内核是亚马逊在 2016 年底发布的 Lex，并对接专注图像识别的 Rekognition 
+和基于机器学习特别是深度学习技术的快速 TTS（文本到语音转换）。
+细心的观众会发现 Echo 音箱并没有提供任何屏幕，仅通过语音进行交互，
+依托 Amazon 的内容资源和电商购物优势提供各种智能交互。这种以语音为主的交互方式在家庭、
+车载等领域得到广泛关注和应用，由此也提出了 Voice UI 的概念。除了语义理解，
+这里需要强调的是：对于 Echo 音箱的交互，是采用远场（通常 3-5 米）沟通的。
+对于远场语音交互，目前远比近场通讯的难度大，涉及到声源定位、
+噪声（如回声、背景噪声、各种声波反射折射产生的混响）消除、人声分离、
+声音增强甚至是声纹识别等各种技术挑战。目前通用的做法是采用麦克风阵列+波束成形等方案，
+不过有很大的提升空间。不过智能音箱是否能在中国成为一个爆款，这个还是一个未知数，
+当然这里涉及到更多使用习惯、价格、内容质量等很多非技术因素的考量，在此就不做具体展开。</p>
+
+<ul>
+  <li>Google Assistant</li>
+</ul>
+
+<p>从 Google Now 到 Google Assistant，谷歌一直没有停止过在语音个人助理方面的尝试。
+Allo是基于 Google Assistant 的新一代人工智能类微信 IM 应用。Allo 具有几个亮点：
+首先，其具备一定的自我学习能力。这里包括两方面的学习，一方面是学习用户的习惯，
+包括说话风格和交互模式。值得一提的是，Allo 的开发者也参与了 Gmail Smart Reply功能的开发，
+帮用户草拟回复的邮件。具体来说，根据邮件接收的对象、主题和关联的场景等，
+根据用户口吻来尽量完成要回复内容。另一方面也包括用户偏好的学习，
+这一点在推荐系统中是非常重要的，属于用户画像的学习。
+Allo 学习用户画像的低维稠密向量化表示（User Embedding）。
+将 User Embedding 加入 Chatbot 的回复生成解码模型中，将有助于回复的相对一致性和个性化。</p>
+
+<ul>
+  <li>百度度秘</li>
+</ul>
+
+<p>度秘（英文名：Duer）是百度出品的对话式人工智能秘书，2015年9月在百度世界大会中推出。
+它是基于DuerOS对话式人工智能系统，通过语音识别、自然语言处理和机器学习，
+用户可以使用语音、文字或图片，以一对一的形式与度秘进行沟通。
+目前DuerOS已经具备10大类目100多项能力，可以为不同行业的合作伙伴赋能，
+广泛支持手机、电视、音箱、汽车、机器人等多种硬件设备，实现语音控制、
+日常聊天、直接提供多种O2O服务等的智能化转变，
+被国内外同行称为“具有划时代意义的对话式人工智能操作系统”。
+依托于百度强大的搜索及智能交互技术，度秘可以在对话中清晰的理解用户的多种需求，
+进而在广泛索引真实世界的服务和信息的基础上，为用户提供各种优质服务。</p>
+
+<ul>
+  <li>搜狗汪仔</li>
+</ul>
+
+<p>搜狗汪仔机器人是搜狗公司打造的问答机器人，搜狗汪仔能听、会说、会看、会思考，
+代表了人工智能领域的前沿技术。搜狗汪仔背后依靠的是基于人工智能技术的搜狗立知问答系统。
+立知问答系统是搜狗搜索研发的面向未来的搜索技术，在理解用户的问题或信息需求后，
+利用海量网络信息及大规模知识库，直接给出答案，方便快捷，
+适用于多种交互方式。其背后蕴含语义分析、问题理解、信息抽取、
+知识图谱、信息检索、深度学习等众多技术。</p>
+
+<ul>
+  <li>阿里小蜜</li>
+</ul>
+
+<p>阿里小蜜是一个无线端多领域私人助理，依托于客户真实的需求，
+通过智能+人工的方式提供客户极致的购物体验服务，提升客户留存并创造价值。
+在跨终端、多场景领域支持多轮交互、多模式交互(文本、语音和图像)和问题推荐预测、
+支持多模型识别客户意图，基于客户需求的垂直领域(服务、
+导购、助手等)均通过智能+人工的方式提供客户极致的客户体验。</p>
+
+<ul>
+  <li>科大讯飞灵犀</li>
+</ul>
+
+<p>灵犀是中国移动和科大讯飞联合推出的智能语音助手，更是国内首款支持粤语的语音助手。
+灵犀既能语音打电话、发短信、查天气、搜航班，还能查话费、查流量、买彩票、订彩铃，
+还可以陪你语音闲聊讲笑话。</p>
+
+<ul>
+  <li>其它</li>
+</ul>
+
+<p>其它还包括叮咚智能音箱、小i机器人、海知智能的机器人等。
+这里的智能问答助手主要都是通过机器人、虚拟语音助手、音箱等形态来承接，
+并且具有多模态识别以及服务推荐、引导、聊天等功能，比一般的文本问答都更智能、更方便。</p>
+
+<h3 id="知识如何结合到对话生成过程中有哪些方式具体怎么做">知识如何结合到对话生成过程中，有哪些方式，具体怎么做？</h3>
+
+<h4 id="知识图嵌入knowledge-graph-embedding">知识图嵌入（knowledge graph embedding）</h4>
+
+<h5 id="transe">transE</h5>
+<p><a href="http://papers.nips.cc/paper/5071-translating-embeddings-for-modeling-multi-relational-data.pdf">论文链接</a></p>
+<ul>
+  <li>Bordes A, Usunier N, Garcia-Duran A, et al. Translating embeddings for modeling multi-relational data[C]//Advances in neural information processing systems. 2013: 2787-2795.</li>
+</ul>
+
+<p>TranE是一篇Bordes等人2013年发表在NIPS上的文章提出的算法。
+它的提出，是为了解决多关系数据（multi-relational data）的处理问题。</p>
+
+<p>模型的基本想法是想要使得前件的向量表示h与关系的向量表示r之和
+与后件的向量表示t尽量接近，即h+r≈t。这里的“接近”可以使用L1或L2范数进行衡量。</p>
+
+<h5 id="transh">transH</h5>
+<p><a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.486.2800&amp;rep=rep1&amp;type=pdf">论文链接</a></p>
+<ul>
+  <li>Wang Z, Zhang J, Feng J, et al. Knowledge graph embedding by translating on hyperplanes[C]//Aaai. 2014, 14(2014): 1112-1119.</li>
+</ul>
+
+<p>对知识库中的实体关系建模,特别是一对多,多对一,多对多的关系。设计更好的建立负类的办法用于训练。
+TransE过于简单，很难对一对多,多对一和多对多关系建模。所以为了平衡模型复杂度和建模效果，
+TransH将把关系映射到另一个空间.并改进算法用尽量少的参数对复杂的关系建模。
+论文另一个亮点是设计了一种负类抽样的方法，即一对多的时候，给head更多的抽样概率， 
+同样的多对一的时候，给tail更多抽样概率。</p>
+
+<h5 id="transd">transD</h5>
+<p><a href="https://www.aclweb.org/anthology/P15-1067.pdf">论文链接</a></p>
+<ul>
+  <li>Ji G, He S, Xu L, et al. Knowledge graph embedding via dynamic mapping matrix[C]//Proceedings of the 53rd annual meeting of the association for computational linguistics and the 7th international joint conference on natural language processing (volume 1: Long papers). 2015: 687-696.</li>
+</ul>
+
+<p>TransD模型在TransE模型的上优化了投影的定义。
+如果TransD的所有投影向量为0，TransD就是TransE。类似的还有TransR/CTransR，
+他们对每个relation定义了一个mapping矩阵，参数更多计算复杂度更大。
+模型只涉及vector的相乘，因此计算复杂度较小，效果也取得了state-of-the-art，适合用于规模很大的知识图谱。</p>
+
+<h4 id="意图识别答案检索">意图识别+答案检索</h4>
+
+<h5 id="searching-questions-by-identifying-question-topic-and-question-focus">Searching questions by identifying question topic and question focus</h5>
+<p><a href="https://www.aclweb.org/anthology/P08-1019.pdf">论文链接</a></p>
+<ul>
+  <li>Duan H, Cao Y, Lin C Y, et al. Searching questions by identifying question topic and question focus[C]//Proceedings of ACL-08: HLT. 2008: 156-164.</li>
+</ul>
+
+<p>采用基于最小描述长度的书剪切模型去进行问题的意图识别，然后再去进行问题匹配从而提高匹配的准确度</p>
+
+<h4 id="end-to-end模型">end-to-end模型</h4>
+
+<h5 id="a-syntactic-tree-matching-approach-to-finding-similar-questions-in-community-based-qa-services">A syntactic tree matching approach to finding similar questions in community-based qa services</h5>
+<p><a href="https://dl.acm.org/doi/abs/10.1145/1571941.1571975">论文链接</a></p>
+<ul>
+  <li>Wang K, Ming Z, Chua T S. A syntactic tree matching approach to finding similar questions in community-based qa services[C]//Proceedings of the 32nd international ACM SIGIR conference on Research and development in information retrieval. 2009: 187-194.</li>
+</ul>
+
+<h5 id="opendialkgexplainable-conversational-reasoning-with-attention-based-walks-over-knowledge-graph">OpenDialKG:Explainable Conversational Reasoning with Attention-based Walks over Knowledge Graph</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1081.pdf">论文链接</a></p>
+<ul>
+  <li>Moon S, Shah P, Kumar A, et al. Opendialkg: Explainable conversational reasoning with attention-based walks over knowledge graphs[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 845-854.</li>
+</ul>
+
+<p>如何根据知识图谱在领域不可知的前提下保证对话系统的参与性和有效性是一个很重要的问题。
+基于此，作者将一段对话模拟为在知识图谱上的路径（可能是多条），以此使得对话系统具有可解释性。</p>
+
+<p>该模型是根据当前对话、以前的所有对话和当前对话中的实体，预测回答语句的实体，
+然后开放式对话系统便可以以该实体为核心组织对应的回复。</p>
+
+<h5 id="do-neural-dialog-systems-use-the-conversation-history-effectively-an-empirical-study">Do Neural Dialog Systems Use the Conversation History Effectively? An Empirical Study</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1004">论文链接</a></p>
+<ul>
+  <li>作者：Chinnadhurai Sankar，Sandeep Subramanian，Christopher Pal，Sarath Chandar，Yoshua Bengio</li>
+  <li>Sankar C, Subramanian S, Pal C, et al. Do Neural Dialog Systems Use the Conversation History Effectively? An Empirical Study[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 32-37.</li>
+</ul>
+
+<p>Bengio 大神署名的文章，主要是研究现有的神经网络模型是否有效利用了对话历史，
+其方法，是在对话历史中加入一点扰动，比如，改变对话数据的先后顺序，或者改变词的顺序，
+然后看模型计算的条件概率是否有变化。需要注意的是，扰动只是发生在预测阶段，而训练阶段，
+是没有对数据做修改的。</p>
+
+<h5 id="constructing-interpretive-spatio-temporal-features-for-multi-turn-response-selection">Constructing Interpretive Spatio-Temporal Features for Multi-Turn Response Selection</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1006">论文链接</a></p>
+<ul>
+  <li>作者：Junyu Lu，Chenbin Zhang，Zeying Xie，Guang Ling，Chao Zhou，Zenglin Xu</li>
+  <li>Lu J, Zhang C, Xie Z, et al. Constructing Interpretive Spatio-Temporal Features for Multi-Turn Responses Selection[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 44-50.</li>
+</ul>
+
+<p>本文通过加入时序和空间上的 feature，来解决对话系统中的回复句子的选择问题。
+方法分两步，第一步是通过软对齐来获取上下文和回复之间的关联信息；
+第二步是在时间维度聚合注意力的映像，并用 3D 卷积和池化来抽取匹配信息。
+模型分表达模块（Representation module）和匹配模块（Matching block）两部分。
+表达模块用的是 Bi-GRU，匹配模块用的是深度 3D 卷积网络（Ji 2013）。</p>
+
+<h5 id="improving-multi-turn-dialogue-modelling-with-utterance-rewriter">Improving Multi-turn Dialogue Modelling with Utterance ReWriter</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1003">论文链接</a></p>
+<ul>
+  <li>作者：Hui Su，Xiaoyu Shen，Rongzhi Zhang，Fei Sun，Pengwei Hu，Cheng Niu，Jie Zhou</li>
+  <li>Su H, Shen X, Zhang R, et al. Improving Multi-turn Dialogue Modelling with Utterance ReWriter[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 22-31.</li>
+</ul>
+
+<p>这是一篇来自腾讯和阿里的文章。本文的想法，是通过语句改写，
+来解决多轮对话中信息省略和引用的问题。通常，在多轮对话中，
+后续的问句会和前面的问句存在部分指代关系，因而后续问法会省略到部分信息。</p>
+
+<h5 id="incremental-transformer-with-deliberation-decoder-for-document-grounded-conversations">Incremental Transformer with Deliberation Decoder for Document Grounded Conversations</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1002">论文链接</a></p>
+<ul>
+  <li>作者：Zekang Li，Cheng Niu，Fandong Meng，Yang Feng，Qian Li，Jie Zhou</li>
+  <li>Li Z, Niu C, Meng F, et al. Incremental Transformer with Deliberation Decoder for Document Grounded Conversations[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 12-21.</li>
+</ul>
+
+<p>本文提出了在有文档背景信息的多轮对话中，一种基于 Transformer 的对话生成模型。
+任务描述如下：当多轮对话的内容，和一个文档集合相关时，模型的目标，
+是输出一个整合了文档知识在内的对话回复。因而，模型的输入，
+除了已有的多轮对话历史，还有一个文档的集合。任务需要解决的问题有两个，
+一是需要挖掘文档中和对话相关的部分；二是将多轮对话的语句，和文档中的相关部分进行统一的表示。</p>
+
+<h5 id="one-time-of-interaction-may-not-be-enough-go-deep-with-an-interaction-over-interaction-network-for-response-selection-in-dialogues">One Time of Interaction May Not Be Enough: Go Deep with an Interaction-over-Interaction Network for Response Selection in Dialogues</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1001">论文链接</a></p>
+<ul>
+  <li>作者：Chongyang Tao，Wei Wu，Can Xu，Wenpeng Hu，Dongyan Zhao，Rui Yan</li>
+  <li>Tao C, Wu W, Xu C, et al. One time of interaction may not be enough: Go deep with an interaction-over-interaction network for response selection in dialogues[C]//Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics. 2019: 1-11.</li>
+</ul>
+
+<p>本文提出了一个基于检索的深度交互对话模型，来解决现有模型中，对对话交互信息利用较浅的问题。
+问题的定义如下：对话数据由 D={（yi，ci，ri）} 三元组组成。
+其中 ci 是对话的问句，ri 是回复，yi 是标记，表明 ri 是否是 ci 的回复。
+模型需要计算 ci 和 ri 之间的匹配得分，来表明两者是否是关联的。</p>
+
+<p>本文的核心，是定义了一个 Interaction-over-Interaction（IoI）网络。
+这个网络由 Interaction Block 构成。每一个 block 包含一个自注意力模块，
+来抽取问句或回复之间的依赖；一个交互模块，来对问句和回复之间的交互进行建模；
+一个压缩模块，来将前两个模块的结果合并成一个。</p>
+
+<h5 id="mie-a-medical-information-extractor-towards-medical-dialogues">MIE: A Medical Information Extractor towards Medical Dialogues</h5>
+<p><a href="https://www.aclweb.org/anthology/P19-1001">论文链接</a></p>
+<ul>
+  <li>作者：Yuanzhe Zhang，Zhongtao Jiang，Tao Zhang，Shiwan Liu，Jun Zhao</li>
+  <li>Zhang Y , Jiang Z , Zhang T , et al. MIE: A Medical Information Extractor towards Medical Dialogues[C]// Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics. 2020.</li>
+</ul>
+
+<p>我们采用窗口滑动的方式对在线医疗咨询对话进行注释，比顺序注释简单得多。
+然后我们提出了一个医学信息提取器(MIE)面向医学对话。MIE 能够提取上述症状、手术、检查、
+其他信息及其相应状态。为了解决这个任务的特殊挑战，
+MIE 使用了一个深度匹配的架构，考虑到了对话交替互动。</p>
+
+<h3 id="基于知识的对话系统还有哪些值得研究的问题">基于知识的对话系统还有哪些值得研究的问题？</h3>
+<ul>
+  <li>
+    <p>知识的有效应用（加深对问题的理解）</p>
+  </li>
+  <li>
+    <p>对话准确性的提升</p>
+  </li>
+  <li>
+    <p>对话模型有能力从与人的交互中主动去学习。</p>
+  </li>
+</ul>
+
+:ET
