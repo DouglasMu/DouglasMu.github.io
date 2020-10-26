@@ -1,0 +1,11 @@
+I"}<ul id="markdown-toc">
+  <li><a href="#从本机传输文件到另一个服务器" id="markdown-toc-从本机传输文件到另一个服务器">从本机传输文件到另一个服务器</a></li>
+</ul>
+
+<h4 id="从本机传输文件到另一个服务器">从本机传输文件到另一个服务器</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp -P 26443 /home/img/150.png root@10.44.99.26:/home/test
+</code></pre></div></div>
+<ul>
+  <li>ps: -P 26443 指的是接受文件的服务器的端口号,如果两台服务器的端口号相同,则可以省略该参数.</li>
+</ul>
+:ET
