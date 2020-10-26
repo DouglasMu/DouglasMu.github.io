@@ -33,9 +33,9 @@ duoshuo_shortname: keyon
 
 # statistic analysis 统计代码
 # 百度统计 id，将统计代码替换为自己的百度统计id，即
-hm.src : "//hm.baidu.com/hm.js?6a433dcc63c5c93732746b7d161b2d0f"
+#hm.src : "//hm.baidu.com/hm.js?6a433dcc63c5c93732746b7d161b2d0f"
 # xxxxx字符串
-baidu_tongji_id: 6a433dcc63c5c93732746b7d161b2d0f
+#baidu_tongji_id: 6a433dcc63c5c93732746b7d161b2d0f
 #google_analytics_id: UA-72449510-4 # google 分析追踪id
 
 # Build settings
